@@ -10,13 +10,19 @@ public class Platform : MonoBehaviour, IPoolable
 {
     [SerializeField] private GameObject visuals;
     private PlatformType _type;
+    private PlatformPool _controller;
 
     public PlatformType Type => _type;
-
+    
     public void ConfigureSelf(Vector3 position, PlatformType type)
     {
         _type = type;
         transform.position = position;
+    }
+
+    public void OnPooled(PlatformPool controller)
+    {
+        _controller = controller;
     }
 
     public void OnFetchedFromPool()
@@ -24,9 +30,14 @@ public class Platform : MonoBehaviour, IPoolable
         visuals.gameObject.SetActive(true);
     }
 
-    public void ResetSelf()
+    public void OnReturnPool()
     {
         transform.position = Vector3.zero;
         visuals.gameObject.SetActive(false);
+    }
+
+    public GameObject GameObject()
+    {
+        return gameObject;
     }
 }

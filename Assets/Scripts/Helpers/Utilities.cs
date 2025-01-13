@@ -6,8 +6,8 @@ namespace Helpers
     {
         public enum PlatformType
         {
-            Square,
-            Circle
+            SquarePlatform,
+            CirclePlatform
         }
     }
 }
