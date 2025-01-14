@@ -1,0 +1,87 @@
+{
+    "name": "InputMap",
+    "maps": [
+        {
+            "name": "General Inputs",
+            "id": "4aadd4c1-a435-4ff5-85b6-fe2f51d7f329",
+            "actions": [
+                {
+                    "name": "Tilt",
+                    "type": "Value",
+                    "id": "847fafd8-a0ef-4079-98ee-2b5415da08f4",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "OnTap",
+                    "type": "Button",
+                    "id": "271e7e0b-dbc7-44b6-9d69-8ea478c5c4a8",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "2D Vector",
+                    "id": "6dde186a-8244-40c4-bd0a-b4af2c91dc08",
+                    "path": "2DVector(mode=2)",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Tilt",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "Left",
+                    "id": "3dd4e411-7124-4088-a543-4e0fe7c62c56",
+                    "path": "<Mouse>/position/x",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Tilt",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "Right",
+                    "id": "e98dee9b-ca5d-465e-a0e2-c0c5800e8753",
+                    "path": "<Mouse>/position/y",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Tilt",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "cf9b835d-621d-4889-bced-9a60fa2bf12e",
+                    "path": "<Touchscreen>/touch*/Press",
+                    "interactions": "Hold",
+                    "processors": "",
+                    "groups": "",
+                    "action": "OnTap",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "d23e674b-96b9-4683-b105-33993661a2bb",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "Hold",
+                    "processors": "",
+                    "groups": "",
+                    "action": "OnTap",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
