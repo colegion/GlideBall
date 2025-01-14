@@ -12,10 +12,10 @@ public class PlatformPool : MonoBehaviour
 
     private void OnEnable()
     {
-        InitializePlatformPool();
+        //InitializePlatformPool();
     }
 
-    private void InitializePlatformPool()
+    public void InitializePlatformPool()
     {
         _pooledPlatforms = new Dictionary<PlatformType, Queue<IPoolable>>();
         

@@ -1,7 +1,10 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using Interfaces;
 using UnityEngine;
 using static Helpers.Utilities;
+using Random = UnityEngine.Random;
 
 public class PlatformController : MonoBehaviour
 {
@@ -11,55 +14,78 @@ public class PlatformController : MonoBehaviour
 
     [SerializeField] private PlatformPool platformPool;
     [SerializeField] private Transform player;
-    [SerializeField] private float spawnDistance = 50f;
+    [SerializeField] private float spawnDistance = 20f;
     [SerializeField] private float despawnDistance = -10f;
     private List<Vector3> _spawnPoints;
 
     private readonly List<Platform> _activePlatforms = new List<Platform>();
-
+    
     private void ManagePlatforms()
     {
-        while (NeedsMorePlatforms())
+        RemoveOutOfViewPlatforms();
+        SpawnPlatformsIfNeeded();
+    }
+
+    private void SpawnPlatformsIfNeeded()
+    {
+        float spawnThreshold = player.position.z + spawnDistance;
+        if (_spatialHash.Count > 0)
+        {
+            var lastRow = GetLastRowInSpatialHash();
+            if (lastRow != null && lastRow.Count > 0)
+            {
+                float lastPlatformZ = lastRow[^1].z;
+                if (lastPlatformZ > spawnThreshold)
+                {
+                    return;
+                }
+            }
+        }
+        
+        for (int i = 0; i < 20; i++)
         {
             Vector3 spawnPoint = GetRandomSpawnPoint();
             PlatformType type = GetRandomPlatformType();
             IPoolable platform = platformPool.GetPlatformByType(type);
 
+            if (platform == null)
+            {
+                Debug.LogWarning($"No available platforms of type {type} in the pool.");
+                return;
+            }
+
             if (platform.GameObject().TryGetComponent(out Platform temp))
             {
+                temp.OnFetchedFromPool();
                 temp.ConfigureSelf(spawnPoint, type);
                 _activePlatforms.Add(temp);
             }
         }
-        
-        for (int i = _activePlatforms.Count - 1; i >= 0; i--)
+    }
+    
+    private List<Vector3> GetLastRowInSpatialHash()
+    {
+        Vector2Int lastKey = default;
+        bool hasKey = false;
+
+        foreach (var key in _spatialHash.Keys)
         {
-            Platform platform = _activePlatforms[i];
-            if (platform.transform.position.z < player.position.z + despawnDistance)
+            if (!hasKey || key.y > lastKey.y)
             {
-                platformPool.ReturnPlatform(platform);
-                _activePlatforms.RemoveAt(i);
+                lastKey = key;
+                hasKey = true;
             }
         }
+
+        return hasKey && _spatialHash.TryGetValue(lastKey, out var row) ? row : null;
     }
 
-    private bool NeedsMorePlatforms()
-    {
-        foreach (var platform in _activePlatforms)
-        {
-            if (platform.transform.position.z > player.position.z + spawnDistance)
-            {
-                return false;
-            }
-        }
-        return true;
-    }
 
     private Vector3 GetRandomSpawnPoint()
     {
         Camera camera = Camera.main;
         if (camera == null) return Vector3.zero;
-        
+
         Vector3 bottomLeft = camera.ViewportToWorldPoint(new Vector3(0, 0, spawnDistance));
         Vector3 topRight = camera.ViewportToWorldPoint(new Vector3(1, 1, spawnDistance));
 
@@ -82,7 +108,7 @@ public class PlatformController : MonoBehaviour
         Debug.LogWarning("Could not find a unique spawn point.");
         return Vector3.zero;
     }
-    
+
     private bool IsPointValid(Vector2Int cell, Vector3 point)
     {
         for (int x = -1; x <= 1; x++)
@@ -100,17 +126,32 @@ public class PlatformController : MonoBehaviour
                 }
             }
         }
+
         return true;
+    }
+
+    private void RemoveOutOfViewPlatforms()
+    {
+        float despawnThreshold = player.position.z + despawnDistance;
+        for (int i = _activePlatforms.Count - 1; i >= 0; i--)
+        {
+            Platform platform = _activePlatforms[i];
+            if (platform.transform.position.z < despawnThreshold)
+            {
+                platformPool.ReturnPlatform(platform);
+                _activePlatforms.RemoveAt(i);
+            }
+        }
+        RemoveOutOfViewPoints();
     }
 
     private void RemoveOutOfViewPoints()
     {
         Camera camera = Camera.main;
         if (camera == null) return;
-
+        
         Vector3 bottomLeft = camera.ViewportToWorldPoint(new Vector3(0, 0, spawnDistance));
         Vector3 topRight = camera.ViewportToWorldPoint(new Vector3(1, 1, spawnDistance));
-        
         Vector2Int minCell = GetCell(bottomLeft);
         Vector2Int maxCell = GetCell(topRight);
         List<Vector2Int> cellsToRemove = new List<Vector2Int>();
@@ -124,9 +165,23 @@ public class PlatformController : MonoBehaviour
 
         foreach (var cell in cellsToRemove)
         {
-            _spatialHash.Remove(cell);
+            if (_spatialHash.TryGetValue(cell, out List<Vector3> points))
+            {
+                foreach (Vector3 point in points)
+                {
+                    Platform platform = _activePlatforms.Find(p => p.transform.position == point);
+                    if (platform != null)
+                    {
+                        platformPool.ReturnPlatform(platform);
+                        _activePlatforms.Remove(platform);
+                    }
+                }
+
+                _spatialHash.Remove(cell);
+            }
         }
     }
+
 
     private Vector2Int GetCell(Vector3 position)
     {
@@ -135,9 +190,9 @@ public class PlatformController : MonoBehaviour
             Mathf.FloorToInt(position.z / _cellSize)
         );
     }
-    
+
     private PlatformType GetRandomPlatformType()
     {
-        return (PlatformType)Random.Range(0, System.Enum.GetValues(typeof(PlatformType)).Length);
+        return (PlatformType)Random.Range(0, Enum.GetValues(typeof(PlatformType)).Length);
     }
 }
