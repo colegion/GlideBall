@@ -8,7 +8,6 @@ namespace Helpers
         private Vector2 _endTouchPosition;
         private bool _isSwipeDetected;
 
-
         void Update()
         {
             DetectSwipe();
@@ -48,6 +47,33 @@ namespace Helpers
                             }
                         }
                         break;
+                }
+            }
+            
+            else if (Input.GetMouseButtonDown(0)) // Left mouse button down
+            {
+                _startTouchPosition = Input.mousePosition;
+                _isSwipeDetected = false;
+            }
+            else if (Input.GetMouseButton(0)) // Left mouse button held
+            {
+                _endTouchPosition = Input.mousePosition;
+
+                if (!_isSwipeDetected)
+                {
+                    Vector2 swipeDelta = _endTouchPosition - _startTouchPosition;
+
+                    if (Mathf.Abs(swipeDelta.x) > Mathf.Abs(swipeDelta.y)) // Horizontal swipe
+                    {
+                        if (swipeDelta.x < 0) // Swiping left
+                        {
+                            Debug.Log("swipe left");
+                        }
+                        else if (swipeDelta.x > 0) // Swiping right
+                        {
+                            Debug.Log("swipe right");
+                        }
+                    }
                 }
             }
         }
