@@ -44,6 +44,15 @@ public partial class @InputController: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Glide"",
+                    ""type"": ""Button"",
+                    ""id"": ""a34faa51-22bb-4190-b0d6-ea9ead6308a3"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -101,6 +110,17 @@ public partial class @InputController: IInputActionCollection2, IDisposable
                     ""action"": ""OnTap"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""39fc555d-80f7-45dd-8212-b0c6a33ea02d"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": ""Hold"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Glide"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -111,6 +131,7 @@ public partial class @InputController: IInputActionCollection2, IDisposable
         m_GeneralInputs = asset.FindActionMap("General Inputs", throwIfNotFound: true);
         m_GeneralInputs_Tilt = m_GeneralInputs.FindAction("Tilt", throwIfNotFound: true);
         m_GeneralInputs_OnTap = m_GeneralInputs.FindAction("OnTap", throwIfNotFound: true);
+        m_GeneralInputs_Glide = m_GeneralInputs.FindAction("Glide", throwIfNotFound: true);
     }
 
     ~@InputController()
@@ -179,12 +200,14 @@ public partial class @InputController: IInputActionCollection2, IDisposable
     private List<IGeneralInputsActions> m_GeneralInputsActionsCallbackInterfaces = new List<IGeneralInputsActions>();
     private readonly InputAction m_GeneralInputs_Tilt;
     private readonly InputAction m_GeneralInputs_OnTap;
+    private readonly InputAction m_GeneralInputs_Glide;
     public struct GeneralInputsActions
     {
         private @InputController m_Wrapper;
         public GeneralInputsActions(@InputController wrapper) { m_Wrapper = wrapper; }
         public InputAction @Tilt => m_Wrapper.m_GeneralInputs_Tilt;
         public InputAction @OnTap => m_Wrapper.m_GeneralInputs_OnTap;
+        public InputAction @Glide => m_Wrapper.m_GeneralInputs_Glide;
         public InputActionMap Get() { return m_Wrapper.m_GeneralInputs; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -200,6 +223,9 @@ public partial class @InputController: IInputActionCollection2, IDisposable
             @OnTap.started += instance.OnOnTap;
             @OnTap.performed += instance.OnOnTap;
             @OnTap.canceled += instance.OnOnTap;
+            @Glide.started += instance.OnGlide;
+            @Glide.performed += instance.OnGlide;
+            @Glide.canceled += instance.OnGlide;
         }
 
         private void UnregisterCallbacks(IGeneralInputsActions instance)
@@ -210,6 +236,9 @@ public partial class @InputController: IInputActionCollection2, IDisposable
             @OnTap.started -= instance.OnOnTap;
             @OnTap.performed -= instance.OnOnTap;
             @OnTap.canceled -= instance.OnOnTap;
+            @Glide.started -= instance.OnGlide;
+            @Glide.performed -= instance.OnGlide;
+            @Glide.canceled -= instance.OnGlide;
         }
 
         public void RemoveCallbacks(IGeneralInputsActions instance)
@@ -231,5 +260,6 @@ public partial class @InputController: IInputActionCollection2, IDisposable
     {
         void OnTilt(InputAction.CallbackContext context);
         void OnOnTap(InputAction.CallbackContext context);
+        void OnGlide(InputAction.CallbackContext context);
     }
 }

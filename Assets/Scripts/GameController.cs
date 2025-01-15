@@ -6,6 +6,8 @@ using UnityEngine;
 
 public class GameController : MonoBehaviour
 {
+    [SerializeField] private Stick stick;
+    [SerializeField] private Player player;
     private InputController _inputController;
 
     private static GameController _instance;
@@ -31,9 +33,32 @@ public class GameController : MonoBehaviour
         _inputController.GeneralInputs.Tilt.Enable();
         _inputController.GeneralInputs.OnTap.Enable();
     }
-
-    public InputController GetInputController()
+    
+    private void Update()
     {
-        return _inputController;
+        if (_inputController == null) return;
+        if (_inputController.GeneralInputs.OnTap.IsPressed())
+        {
+            var tilt = _inputController.GeneralInputs.Tilt.ReadValue<Vector2>();
+            Debug.Log("tilt :" + tilt);
+            stick.TiltBones(tilt.x);
+        }
+        
+        if(_inputController.GeneralInputs.OnTap.WasReleasedThisFrame())
+        {
+            stick.TiltBones(0);
+            _inputController.GeneralInputs.Glide.Enable();
+            player.HandleOnStickReleased(stick.GetLastTilt());
+        }
+
+        if (_inputController.GeneralInputs.Glide.IsPressed())
+        {
+            player.ToggleWings(true);
+        }
+        
+        if (_inputController.GeneralInputs.Glide.WasReleasedThisFrame())
+        {
+            player.ToggleWings(false);
+        }
     }
 }
