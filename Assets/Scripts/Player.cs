@@ -8,11 +8,9 @@ public class Player : MonoBehaviour
     [SerializeField] private Animator playerAnimator;
     [SerializeField] private CustomPhysics physics;
 
-    private static int _openWings = Animator.StringToHash("OpenWings");
-    private static int _closeWings = Animator.StringToHash("CloseWings");
-
     private bool _wingsEnabled;
-    
+    private static readonly int IsWingsOpen = Animator.StringToHash("isWingsOpen");
+
     private void OnEnable()
     {
         AddListeners();
@@ -30,14 +28,21 @@ public class Player : MonoBehaviour
 
     public void ToggleWings(bool toggle)
     {
-        _wingsEnabled = toggle;
         if (toggle)
         {
-            playerAnimator.Play(_openWings);
+            if (!_wingsEnabled)
+            {
+                _wingsEnabled = true;
+                playerAnimator.SetBool(IsWingsOpen, true);
+            }
         }
         else
         {
-            playerAnimator.Play(_closeWings);
+            if (_wingsEnabled)
+            {
+                _wingsEnabled = false;
+                playerAnimator.SetBool(IsWingsOpen, false);
+            }
         }
     }
     
