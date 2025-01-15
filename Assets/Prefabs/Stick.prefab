@@ -56,6 +56,7 @@ MonoBehaviour:
   - {fileID: 7421234547844219063}
   - {fileID: 6858459083135405072}
   - {fileID: 9120324340159657320}
+  stickAnimator: {fileID: 2516775255719347975}
 --- !u!1001 &505696916805428858
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -178,6 +179,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.x
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -6057140222963153312, guid: aea1cdbbc89b14a10855ec48a5212c9a,
+        type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 9bae47fe8ffc3e1439bc66e07f504b3a, type: 2}
     - target: {fileID: -4653569573939922635, guid: aea1cdbbc89b14a10855ec48a5212c9a,
         type: 3}
       propertyPath: m_LocalRotation.w
@@ -445,6 +451,12 @@ PrefabInstance:
 --- !u!4 &1160046057806462595 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -7420637563149516828, guid: aea1cdbbc89b14a10855ec48a5212c9a,
+    type: 3}
+  m_PrefabInstance: {fileID: 656917299158581607}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &2516775255719347975 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: -6057140222963153312, guid: aea1cdbbc89b14a10855ec48a5212c9a,
     type: 3}
   m_PrefabInstance: {fileID: 656917299158581607}
   m_PrefabAsset: {fileID: 0}

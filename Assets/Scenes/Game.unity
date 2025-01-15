@@ -785,6 +785,11 @@ PrefabInstance:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: c88ad8c67f3432b4f857a9134639d281, type: 2}
+    - target: {fileID: 2516775255719347975, guid: 862aef25e170a404f9e99f8db358e889,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3548614498284914591, guid: 862aef25e170a404f9e99f8db358e889,
         type: 3}
       propertyPath: baseBone

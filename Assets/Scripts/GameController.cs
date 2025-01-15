@@ -46,17 +46,18 @@ public class GameController : MonoBehaviour
         
         if(_inputController.GeneralInputs.OnTap.WasReleasedThisFrame())
         {
-            stick.TiltBones(0);
-            _inputController.GeneralInputs.Glide.Enable();
+            //stick.TiltBones(0);
+            _inputController.GeneralInputs.BeginGlide.Enable();
+            stick.PlayReleaseAnimation();
             player.HandleOnStickReleased(stick.GetLastTilt());
         }
 
-        if (_inputController.GeneralInputs.Glide.IsPressed())
+        if (_inputController.GeneralInputs.BeginGlide.IsPressed())
         {
             player.ToggleWings(true);
         }
         
-        if (_inputController.GeneralInputs.Glide.WasReleasedThisFrame())
+        if (_inputController.GeneralInputs.BeginGlide.WasReleasedThisFrame())
         {
             player.ToggleWings(false);
         }
