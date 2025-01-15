@@ -46,13 +46,22 @@ public partial class @InputController: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""BeginGlide"",
+                    ""name"": ""TriggerGlide"",
                     ""type"": ""Button"",
                     ""id"": ""a34faa51-22bb-4190-b0d6-ea9ead6308a3"",
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Glide"",
+                    ""type"": ""Value"",
+                    ""id"": ""4bca35bf-e3eb-4b64-a13c-3711fba5ef0d"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -118,9 +127,42 @@ public partial class @InputController: IInputActionCollection2, IDisposable
                     ""interactions"": ""Hold"",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""BeginGlide"",
+                    ""action"": ""TriggerGlide"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""2D Vector"",
+                    ""id"": ""185dcd6b-0a05-442d-b83c-61188170dfd8"",
+                    ""path"": ""2DVector(mode=2)"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Glide"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""left"",
+                    ""id"": ""0320c265-0c15-463e-b221-e474eae1acb3"",
+                    ""path"": ""<Mouse>/delta/left"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Glide"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""right"",
+                    ""id"": ""64928b7c-8422-4830-9574-d3b11708e81f"",
+                    ""path"": ""<Mouse>/delta/right"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Glide"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
                 }
             ]
         }
@@ -131,7 +173,8 @@ public partial class @InputController: IInputActionCollection2, IDisposable
         m_GeneralInputs = asset.FindActionMap("General Inputs", throwIfNotFound: true);
         m_GeneralInputs_Tilt = m_GeneralInputs.FindAction("Tilt", throwIfNotFound: true);
         m_GeneralInputs_OnTap = m_GeneralInputs.FindAction("OnTap", throwIfNotFound: true);
-        m_GeneralInputs_BeginGlide = m_GeneralInputs.FindAction("BeginGlide", throwIfNotFound: true);
+        m_GeneralInputs_TriggerGlide = m_GeneralInputs.FindAction("TriggerGlide", throwIfNotFound: true);
+        m_GeneralInputs_Glide = m_GeneralInputs.FindAction("Glide", throwIfNotFound: true);
     }
 
     ~@InputController()
@@ -200,14 +243,16 @@ public partial class @InputController: IInputActionCollection2, IDisposable
     private List<IGeneralInputsActions> m_GeneralInputsActionsCallbackInterfaces = new List<IGeneralInputsActions>();
     private readonly InputAction m_GeneralInputs_Tilt;
     private readonly InputAction m_GeneralInputs_OnTap;
-    private readonly InputAction m_GeneralInputs_BeginGlide;
+    private readonly InputAction m_GeneralInputs_TriggerGlide;
+    private readonly InputAction m_GeneralInputs_Glide;
     public struct GeneralInputsActions
     {
         private @InputController m_Wrapper;
         public GeneralInputsActions(@InputController wrapper) { m_Wrapper = wrapper; }
         public InputAction @Tilt => m_Wrapper.m_GeneralInputs_Tilt;
         public InputAction @OnTap => m_Wrapper.m_GeneralInputs_OnTap;
-        public InputAction @BeginGlide => m_Wrapper.m_GeneralInputs_BeginGlide;
+        public InputAction @TriggerGlide => m_Wrapper.m_GeneralInputs_TriggerGlide;
+        public InputAction @Glide => m_Wrapper.m_GeneralInputs_Glide;
         public InputActionMap Get() { return m_Wrapper.m_GeneralInputs; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -223,9 +268,12 @@ public partial class @InputController: IInputActionCollection2, IDisposable
             @OnTap.started += instance.OnOnTap;
             @OnTap.performed += instance.OnOnTap;
             @OnTap.canceled += instance.OnOnTap;
-            @BeginGlide.started += instance.OnBeginGlide;
-            @BeginGlide.performed += instance.OnBeginGlide;
-            @BeginGlide.canceled += instance.OnBeginGlide;
+            @TriggerGlide.started += instance.OnTriggerGlide;
+            @TriggerGlide.performed += instance.OnTriggerGlide;
+            @TriggerGlide.canceled += instance.OnTriggerGlide;
+            @Glide.started += instance.OnGlide;
+            @Glide.performed += instance.OnGlide;
+            @Glide.canceled += instance.OnGlide;
         }
 
         private void UnregisterCallbacks(IGeneralInputsActions instance)
@@ -236,9 +284,12 @@ public partial class @InputController: IInputActionCollection2, IDisposable
             @OnTap.started -= instance.OnOnTap;
             @OnTap.performed -= instance.OnOnTap;
             @OnTap.canceled -= instance.OnOnTap;
-            @BeginGlide.started -= instance.OnBeginGlide;
-            @BeginGlide.performed -= instance.OnBeginGlide;
-            @BeginGlide.canceled -= instance.OnBeginGlide;
+            @TriggerGlide.started -= instance.OnTriggerGlide;
+            @TriggerGlide.performed -= instance.OnTriggerGlide;
+            @TriggerGlide.canceled -= instance.OnTriggerGlide;
+            @Glide.started -= instance.OnGlide;
+            @Glide.performed -= instance.OnGlide;
+            @Glide.canceled -= instance.OnGlide;
         }
 
         public void RemoveCallbacks(IGeneralInputsActions instance)
@@ -260,6 +311,7 @@ public partial class @InputController: IInputActionCollection2, IDisposable
     {
         void OnTilt(InputAction.CallbackContext context);
         void OnOnTap(InputAction.CallbackContext context);
-        void OnBeginGlide(InputAction.CallbackContext context);
+        void OnTriggerGlide(InputAction.CallbackContext context);
+        void OnGlide(InputAction.CallbackContext context);
     }
 }

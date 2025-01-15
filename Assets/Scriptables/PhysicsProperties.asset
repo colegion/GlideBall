@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a8b67ebd3280bc4cb7b6e69c48ab64f, type: 3}
   m_Name: PhysicsProperties
   m_EditorClassIdentifier: 
-  gravity: 10
+  gravity: 1
   friction: 0

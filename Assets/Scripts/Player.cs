@@ -23,7 +23,7 @@ public class Player : MonoBehaviour
 
     public void HandleOnStickReleased(float tilt)
     {
-        physics.AddForce(new Vector3(tilt, 0, 0));
+        physics.AddForce(new Vector3(0, 0,0));
     }
 
     public void ToggleWings(bool toggle)
@@ -45,7 +45,16 @@ public class Player : MonoBehaviour
             }
         }
     }
-    
+
+    private void OnCollisionEnter(Collision other)
+    {
+        if (other.gameObject.TryGetComponent(out Platform platform))
+        {
+            var boost = platform.GetBoostAmount();
+            physics.AddForce(new Vector3(0, boost, 0));
+        }
+    }
+
     private void AddListeners()
     {
     }

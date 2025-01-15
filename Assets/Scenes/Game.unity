@@ -795,10 +795,15 @@ PrefabInstance:
       propertyPath: baseBone
       value: 
       objectReference: {fileID: 1324080721}
+    - target: {fileID: 3722265048725823387, guid: 862aef25e170a404f9e99f8db358e889,
+        type: 3}
+      propertyPath: m_CollisionDetection
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6647754611897993489, guid: 862aef25e170a404f9e99f8db358e889,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 1.1
       objectReference: {fileID: 0}
     - target: {fileID: 6647754611897993489, guid: 862aef25e170a404f9e99f8db358e889,
         type: 3}

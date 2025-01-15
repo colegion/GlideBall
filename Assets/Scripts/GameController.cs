@@ -40,26 +40,38 @@ public class GameController : MonoBehaviour
         if (_inputController.GeneralInputs.OnTap.IsPressed())
         {
             var tilt = _inputController.GeneralInputs.Tilt.ReadValue<Vector2>();
-            Debug.Log("tilt :" + tilt);
+            Debug.Log($"tilt : {tilt}");
             stick.TiltBones(tilt.x);
         }
         
         if(_inputController.GeneralInputs.OnTap.WasReleasedThisFrame())
         {
-            //stick.TiltBones(0);
-            _inputController.GeneralInputs.BeginGlide.Enable();
-            stick.PlayReleaseAnimation();
-            player.HandleOnStickReleased(stick.GetLastTilt());
+            var tilt = stick.GetLastTilt();
+            if (tilt > 0)
+            {
+                _inputController.GeneralInputs.TriggerGlide.Enable();
+                _inputController.GeneralInputs.Tilt.Disable();
+                stick.PlayReleaseAnimation();
+                player.HandleOnStickReleased(tilt);
+            }
         }
 
-        if (_inputController.GeneralInputs.BeginGlide.IsPressed())
+        if (_inputController.GeneralInputs.TriggerGlide.IsPressed())
         {
             player.ToggleWings(true);
+            _inputController.GeneralInputs.Glide.Enable();
         }
         
-        if (_inputController.GeneralInputs.BeginGlide.WasReleasedThisFrame())
+        if (_inputController.GeneralInputs.TriggerGlide.WasReleasedThisFrame())
         {
             player.ToggleWings(false);
+            _inputController.GeneralInputs.Glide.Disable();
+        }
+
+        if (_inputController.GeneralInputs.Glide.enabled)
+        {
+            var delta = _inputController.GeneralInputs.Glide.ReadValue<Vector2>();
+            Debug.Log($"swipe delta is : {delta}");
         }
     }
 }

@@ -24,13 +24,22 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "BeginGlide",
+                    "name": "TriggerGlide",
                     "type": "Button",
                     "id": "a34faa51-22bb-4190-b0d6-ea9ead6308a3",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Glide",
+                    "type": "Value",
+                    "id": "4bca35bf-e3eb-4b64-a13c-3711fba5ef0d",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -96,9 +105,42 @@
                     "interactions": "Hold",
                     "processors": "",
                     "groups": "",
-                    "action": "BeginGlide",
+                    "action": "TriggerGlide",
                     "isComposite": false,
                     "isPartOfComposite": false
+                },
+                {
+                    "name": "2D Vector",
+                    "id": "185dcd6b-0a05-442d-b83c-61188170dfd8",
+                    "path": "2DVector(mode=2)",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Glide",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "left",
+                    "id": "0320c265-0c15-463e-b221-e474eae1acb3",
+                    "path": "<Mouse>/delta/left",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Glide",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "right",
+                    "id": "64928b7c-8422-4830-9574-d3b11708e81f",
+                    "path": "<Mouse>/delta/right",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Glide",
+                    "isComposite": false,
+                    "isPartOfComposite": true
                 }
             ]
         }
