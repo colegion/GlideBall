@@ -10,7 +10,7 @@ public class PlatformController : MonoBehaviour
 {
     private Dictionary<Vector2Int, List<Vector3>> _spatialHash = new Dictionary<Vector2Int, List<Vector3>>();
     private readonly float _cellSize = 5f;
-    private readonly float _minDistance = 20f;
+    private readonly float _minDistance = 2f;
 
     [SerializeField] private PlatformPool platformPool;
     [SerializeField] private Transform player;
@@ -19,7 +19,17 @@ public class PlatformController : MonoBehaviour
     private List<Vector3> _spawnPoints;
 
     private readonly List<Platform> _activePlatforms = new List<Platform>();
-    
+
+    private void Start()
+    {
+        platformPool.InitializePlatformPool();
+    }
+
+    private void Update()
+    {
+        ManagePlatforms();
+    }
+
     private void ManagePlatforms()
     {
         RemoveOutOfViewPlatforms();
@@ -181,7 +191,6 @@ public class PlatformController : MonoBehaviour
             }
         }
     }
-
 
     private Vector2Int GetCell(Vector3 position)
     {

@@ -5,9 +5,18 @@ namespace Helpers
 {
     public class Utilities : MonoBehaviour
     {
+        [SerializeField] private float platformDefaultBoostAmount;
+
+        public static float DefaultBoostAmount { get; private set; }
+
+        private void Start()
+        {
+            DefaultBoostAmount = platformDefaultBoostAmount;
+        }
+
         public enum PlatformType
         {
-            SquarePlatform,
+            SquarePlatform = 0,
             CirclePlatform
         }
 

@@ -11,13 +11,14 @@ public class Platform : MonoBehaviour, IPoolable
     [SerializeField] private GameObject visuals;
     private PlatformType _type;
     private PlatformPool _controller;
-
+    private float _boostAmount;
     public PlatformType Type => _type;
     
     public void ConfigureSelf(Vector3 position, PlatformType type)
     {
         _type = type;
         transform.position = position;
+        _boostAmount = Utilities.DefaultBoostAmount * ((int)_type + 1);
     }
 
     public void OnPooled(PlatformPool controller)
@@ -34,6 +35,11 @@ public class Platform : MonoBehaviour, IPoolable
     {
         transform.position = Vector3.zero;
         visuals.gameObject.SetActive(false);
+    }
+
+    public float GetBoostAmount()
+    {
+        return _boostAmount;
     }
 
     public GameObject GameObject()
