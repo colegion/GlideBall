@@ -923,6 +923,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 857246419672909275, guid: 862aef25e170a404f9e99f8db358e889,
         type: 3}
+      propertyPath: bouncinessFactor
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 857246419672909275, guid: 862aef25e170a404f9e99f8db358e889,
+        type: 3}
       propertyPath: rotationSensitivity
       value: 20
       objectReference: {fileID: 0}

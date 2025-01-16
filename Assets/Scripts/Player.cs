@@ -43,24 +43,4 @@ public class Player : MonoBehaviour
         var initialRotation = transform.rotation.eulerAngles;
         transform.rotation = Quaternion.Euler(new Vector3(transform.rotation.x, amount.x, 0) + initialRotation);
     }
-
-    private void OnCollisionEnter(Collision other)
-    {
-        if (other.gameObject.TryGetComponent(out Platform platform))
-        {
-            var boost = platform.GetBoostAmount();
-            physics.AddForce(new Vector3(0, boost, 0));
-        }
-        else
-        {
-            Debug.Log("hit: " + other.contacts[0].point);
-            Debug.Log("hit normal: " + other.contacts[0].point.normalized);
-            physics.ReactionToCollisionEnter();
-        }
-    }
-
-    private void OnCollisionStay(Collision other)
-    {
-        physics.ReactionToCollisionStay();
-    }
 }

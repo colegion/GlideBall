@@ -6,6 +6,7 @@ using Scriptables;
 using UnityEngine;
 using UnityEngine.Serialization;
 
+[RequireComponent(typeof(Collider))]
 public class CustomPhysics : MonoBehaviour
 {
     [SerializeField] private Collider playerCollider;
@@ -25,19 +26,37 @@ public class CustomPhysics : MonoBehaviour
     public void AddForce(Vector3 force)
     {
         _movementStarted = true;
-        acceleration = force / mass;
+        acceleration += force / mass;
+    }
+    
+    private void OnCollisionEnter(Collision other)
+    {
+        if (other.gameObject.TryGetComponent(out Platform platform))
+        {
+            var boost = platform.GetBoostAmount();
+            AddForce(new Vector3(0, boost, 0));
+        }
+        else
+        {
+            ReactionToCollisionEnter();
+        }
     }
 
-    public void ReactionToCollisionEnter()
+    private void OnCollisionStay(Collision other)
     {
-        var reaction = new Vector3(velocity.x, -velocity.y, velocity.z) * bouncinessFactor;
+        ReactionToCollisionStay();
+    }
+
+    private void ReactionToCollisionEnter()
+    {
+        var reaction = new Vector3(velocity.x, -velocity.y, -velocity.z) * bouncinessFactor;
         velocity.y = 0;
         _velocityFactor = 0;
         AddForce(reaction);
         _velocityFactor = 1;
     }
 
-    public void ReactionToCollisionStay()
+    private void ReactionToCollisionStay()
     {
         AddForce(new Vector3(0, physicsProperties.gravity, 0));
         if (Mathf.Abs(velocity.z) > 0)
