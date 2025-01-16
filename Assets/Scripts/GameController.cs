@@ -8,6 +8,7 @@ public class GameController : MonoBehaviour
 {
     [SerializeField] private Stick stick;
     [SerializeField] private Player player;
+    [SerializeField] private CameraController cameraController;
     private InputController _inputController;
 
     private static GameController _instance;
@@ -53,6 +54,7 @@ public class GameController : MonoBehaviour
                 _inputController.GeneralInputs.Tilt.Disable();
                 stick.PlayReleaseAnimation();
                 player.HandleOnStickReleased(tilt);
+                cameraController.FollowTarget(player.transform);
             }
         }
 

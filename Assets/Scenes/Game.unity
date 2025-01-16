@@ -185,6 +185,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   stick: {fileID: 2077417786}
   player: {fileID: 2037640692}
+  cameraController: {fileID: 0}
 --- !u!4 &1241819215
 Transform:
   m_ObjectHideFlags: 0
@@ -384,6 +385,7 @@ GameObject:
   - component: {fileID: 1359354119}
   - component: {fileID: 1359354118}
   - component: {fileID: 1359354121}
+  - component: {fileID: 1359354122}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -509,6 +511,19 @@ MonoBehaviour:
     m_MipBias: 0
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
+--- !u!114 &1359354122
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1359354117}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 902fbf088a621a649a5fa890ef1e08eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetDistance: 4
 --- !u!1 &1581201304
 GameObject:
   m_ObjectHideFlags: 0
