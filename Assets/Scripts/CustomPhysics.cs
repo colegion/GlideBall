@@ -4,32 +4,82 @@ using System.Collections.Generic;
 using Helpers;
 using Scriptables;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class CustomPhysics : MonoBehaviour
 {
     [SerializeField] private CustomPhysicsProperties physicsProperties;
     [SerializeField] private Utilities.Constraints bodyConstraints;
+    [SerializeField] private GameObject rocketman;
     
     public float mass;
+    public Vector3 acceleration;
     public Vector3 velocity;
     private bool _movementStarted;
+    private bool _wingsOpen;
     
     public void AddForce(Vector3 force)
     {
         _movementStarted = true;
-        velocity = force / mass;
-        Debug.Log("velocity is :" + velocity);
+        acceleration = force / mass;
     }
 
+    public void ReactionOnCollision()
+    {
+        acceleration.y = 0f;
+    }
+
+    private Vector3 _amountToLoseOnFriction;
     private void FixedUpdate()
     {
         if (!_movementStarted) return;
-        var inversedX = Convert.ToInt16(bodyConstraints.freezePositionX) == 0 ? 1 : 0;
-        var inversedY = Convert.ToInt16(bodyConstraints.freezePositionY) == 0 ? 1 : 0;
-        var inversedZ = Convert.ToInt16(bodyConstraints.freezePositionZ) == 0 ? 1 : 0;
-        transform.position += new Vector3(velocity.x * inversedX, 
-            (velocity.y - physicsProperties.gravity) * inversedY, 
-            velocity.z * inversedZ) * Time.fixedTime;
-        Debug.Log("position: " + transform.position);
+        
+        var freezePosX = bodyConstraints.freezePositionX ? 0 : 1;
+        var freezePosY = bodyConstraints.freezePositionY ? 0 : 1;
+        var freezePosZ = bodyConstraints.freezePositionZ ? 0 : 1;
+        acceleration.y -= physicsProperties.gravity;
+        velocity += acceleration * Time.fixedDeltaTime;
+        var displacement = velocity * Time.fixedDeltaTime;
+        
+        transform.Translate(displacement, Space.World);
+        
+        
+        if (_wingsOpen)
+        {
+            rocketman.transform.localRotation = Quaternion.Euler(90, 0, 0);
+        }
+        else
+        {
+            rocketman.transform.Rotate(new Vector3(20, 0, 0));
+        }
+
+        acceleration = Vector3.zero;
+    }
+
+    private void ApplyFriction(ref float value)
+    {
+        if (Mathf.Approximately(value, 0))
+        {
+            value = 0; 
+            return;
+        }
+
+        int direction = GetDirection(value);
+        value -= physicsProperties.friction * direction;
+        
+        if (Mathf.Abs(value) < physicsProperties.friction)
+        {
+            value = 0;
+        }
+    }
+
+    private int GetDirection(float value)
+    {
+        return (int)(value / Mathf.Abs(value));
+    }
+
+    public void SetWingsStatus(bool value)
+    {
+        _wingsOpen = value;
     }
 }

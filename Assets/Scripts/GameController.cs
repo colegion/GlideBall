@@ -52,9 +52,10 @@ public class GameController : MonoBehaviour
             {
                 _inputController.GeneralInputs.TriggerGlide.Enable();
                 _inputController.GeneralInputs.Tilt.Disable();
+                player.transform.SetParent(null);
                 stick.PlayReleaseAnimation();
                 player.HandleOnStickReleased(tilt);
-                cameraController.FollowTarget(player.transform);
+                //cameraController.FollowTarget(player.transform);
             }
         }
 
@@ -74,6 +75,7 @@ public class GameController : MonoBehaviour
         {
             var delta = _inputController.GeneralInputs.Glide.ReadValue<Vector2>();
             Debug.Log($"swipe delta is : {delta}");
+            player.TiltByAmount(delta);
         }
     }
 }
