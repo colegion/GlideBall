@@ -53,8 +53,14 @@ public class Player : MonoBehaviour
         }
         else
         {
-            physics.acceleration = Vector3.zero;
-            physics.ReactionOnCollision();
+            Debug.Log("hit: " + other.contacts[0].point);
+            Debug.Log("hit normal: " + other.contacts[0].point.normalized);
+            physics.ReactionToCollisionEnter();
         }
+    }
+
+    private void OnCollisionStay(Collision other)
+    {
+        physics.ReactionToCollisionStay();
     }
 }

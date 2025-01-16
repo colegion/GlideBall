@@ -48,6 +48,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e9f0d1ff22698914aa6c1e8a062cf3ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerCollider: {fileID: 1344319946731893053}
+  bouncinessFactor: 5
+  rotationFactor: 20
   physicsProperties: {fileID: 11400000, guid: 0c498130e42f9c94192d116d2fcf3225, type: 2}
   bodyConstraints:
     freezeRotationX: 0
@@ -59,6 +62,7 @@ MonoBehaviour:
   rocketman: {fileID: 7181809558908529066}
   mass: 1
   acceleration: {x: 0, y: 0, z: 0}
+  velocity: {x: 0, y: 0, z: 0}
 --- !u!114 &8960522869685148031
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -107,7 +111,7 @@ SphereCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5151278668660147737}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: a6a063ce59124ae4db363e2b36e58393, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0

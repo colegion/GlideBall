@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: PhysicsProperties
   m_EditorClassIdentifier: 
   gravity: 9.81
-  friction: 1
+  friction: 9.81

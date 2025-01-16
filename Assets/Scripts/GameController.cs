@@ -41,7 +41,6 @@ public class GameController : MonoBehaviour
         if (_inputController.GeneralInputs.OnTap.IsPressed())
         {
             var tilt = _inputController.GeneralInputs.Tilt.ReadValue<Vector2>();
-            Debug.Log($"tilt : {tilt}");
             stick.TiltBones(tilt.x);
         }
         

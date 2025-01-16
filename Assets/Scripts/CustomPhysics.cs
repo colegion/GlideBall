@@ -8,6 +8,9 @@ using UnityEngine.Serialization;
 
 public class CustomPhysics : MonoBehaviour
 {
+    [SerializeField] private Collider playerCollider;
+    [SerializeField] private float bouncinessFactor;
+    [SerializeField] private float rotationFactor;
     [SerializeField] private CustomPhysicsProperties physicsProperties;
     [SerializeField] private Utilities.Constraints bodyConstraints;
     [SerializeField] private GameObject rocketman;
@@ -17,19 +20,37 @@ public class CustomPhysics : MonoBehaviour
     public Vector3 velocity;
     private bool _movementStarted;
     private bool _wingsOpen;
-    
+
+    private int _velocityFactor = 1;
     public void AddForce(Vector3 force)
     {
         _movementStarted = true;
         acceleration = force / mass;
     }
 
-    public void ReactionOnCollision()
+    public void ReactionToCollisionEnter()
     {
-        acceleration.y = 0f;
+        var reaction = new Vector3(velocity.x, -velocity.y, velocity.z) * bouncinessFactor;
+        velocity.y = 0;
+        _velocityFactor = 0;
+        AddForce(reaction);
+        _velocityFactor = 1;
     }
 
-    private Vector3 _amountToLoseOnFriction;
+    public void ReactionToCollisionStay()
+    {
+        AddForce(new Vector3(0, physicsProperties.gravity, 0));
+        if (Mathf.Abs(velocity.z) > 0)
+        {
+            var opposeForce = GetDirection(velocity.z) * physicsProperties.friction;
+            AddForce(new Vector3(0, physicsProperties.gravity, -opposeForce));
+        }
+        else
+        {
+            velocity.z = 0;
+        }
+    }
+
     private void FixedUpdate()
     {
         if (!_movementStarted) return;
@@ -38,22 +59,25 @@ public class CustomPhysics : MonoBehaviour
         var freezePosY = bodyConstraints.freezePositionY ? 0 : 1;
         var freezePosZ = bodyConstraints.freezePositionZ ? 0 : 1;
         acceleration.y -= physicsProperties.gravity;
-        velocity += acceleration * Time.fixedDeltaTime;
+        velocity += acceleration * (_velocityFactor * Time.fixedDeltaTime);
         var displacement = velocity * Time.fixedDeltaTime;
         
         transform.Translate(displacement, Space.World);
-        
-        
+        Rotate();
+
+        acceleration = Vector3.zero;
+    }
+    
+    private void Rotate()
+    {
         if (_wingsOpen)
         {
             rocketman.transform.localRotation = Quaternion.Euler(90, 0, 0);
         }
         else
         {
-            rocketman.transform.Rotate(new Vector3(20, 0, 0));
+            rocketman.transform.Rotate(new Vector3(velocity.z * rotationFactor, 0, 0) * Time.fixedDeltaTime);
         }
-
-        acceleration = Vector3.zero;
     }
 
     private void ApplyFriction(ref float value)
