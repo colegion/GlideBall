@@ -53,8 +53,10 @@ public class GameController : MonoBehaviour
                 _inputController.GeneralInputs.Tilt.Disable();
                 player.transform.SetParent(null);
                 stick.PlayReleaseAnimation();
-                player.HandleOnStickReleased(tilt);
-                //cameraController.FollowTarget(player.transform);
+                cameraController.SetTarget(player.transform, () =>
+                {
+                    player.HandleOnStickReleased(tilt);
+                });
             }
         }
 
