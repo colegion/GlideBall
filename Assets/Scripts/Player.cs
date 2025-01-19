@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    [SerializeField] private GameObject rocketman;
     [SerializeField] private Animator playerAnimator;
     [SerializeField] private CustomPhysics physics;
 
@@ -13,7 +14,7 @@ public class Player : MonoBehaviour
 
     public void HandleOnStickReleased(float tilt)
     {
-        physics.AddForce(new Vector3(0, tilt, tilt * 500f));
+        physics.AddForce(new Vector3(0, tilt, tilt * 5f));
     }
 
     public void ToggleWings(bool toggle)
@@ -24,7 +25,7 @@ public class Player : MonoBehaviour
             {
                 _wingsEnabled = true;
                 playerAnimator.SetBool(IsWingsOpen, true);
-                physics.SetWingsStatus(true);
+                physics.SetCanRotate(true);
             }
         }
         else
@@ -33,14 +34,28 @@ public class Player : MonoBehaviour
             {
                 _wingsEnabled = false;
                 playerAnimator.SetBool(IsWingsOpen, false);
-                physics.SetWingsStatus(false);
+                physics.SetCanRotate(false);
             }
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.TryGetComponent(out Platform platform))
+        {
+            physics.AddForce(new Vector3(0, platform.GetBoostAmount(), 0));
         }
     }
 
     public void TiltByAmount(Vector2 amount)
     {
-        var initialRotation = transform.rotation.eulerAngles;
-        transform.rotation = Quaternion.Euler(new Vector3(transform.rotation.x, amount.x, 0) + initialRotation);
+        physics.SetIsGliding(true);
+        physics.SetGlideAmount(amount.x);
+    }
+
+    public void DisableGliding()
+    {
+        physics.SetIsGliding(false);
+        physics.SetGlideAmount(0);
     }
 }

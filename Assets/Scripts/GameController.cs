@@ -75,6 +75,7 @@ public class GameController : MonoBehaviour
         {
             player.ToggleWings(false);
             _inputController.GeneralInputs.Glide.Disable();
+            player.DisableGliding();
         }
 
         if (_inputController.GeneralInputs.Glide.enabled)

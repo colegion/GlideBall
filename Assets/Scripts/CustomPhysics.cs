@@ -1,128 +1,146 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using Helpers;
 using Scriptables;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 [RequireComponent(typeof(Collider))]
 public class CustomPhysics : MonoBehaviour
 {
-    [SerializeField] private Collider playerCollider;
-    [SerializeField] private float bouncinessFactor;
-    [SerializeField] private float rotationFactor;
+    [Header("Physics Properties")]
+    [SerializeField] private float mass = 1f;
+    [SerializeField] private float friction = 0.1f;
+    [SerializeField] private float bounciness = 0.1f;
     [SerializeField] private CustomPhysicsProperties physicsProperties;
-    [SerializeField] private Utilities.Constraints bodyConstraints;
+
+    [Header("Debug Options")] 
+    [SerializeField] private bool debugCollision = true;
+
     [SerializeField] private GameObject rocketman;
-    
-    public float mass;
-    public Vector3 acceleration;
-    public Vector3 velocity;
-    private bool _movementStarted;
-    private bool _wingsOpen;
+    [SerializeField] private float rotationFactor;
+    [SerializeField] private float tiltBorder;
 
-    private int _velocityFactor = 1;
-    public void AddForce(Vector3 force)
-    {
-        _movementStarted = true;
-        acceleration += force / mass;
-    }
-    
-    private void OnCollisionEnter(Collision other)
-    {
-        if (other.gameObject.TryGetComponent(out Platform platform))
-        {
-            var boost = platform.GetBoostAmount();
-            AddForce(new Vector3(0, boost, 0));
-        }
-        else
-        {
-            ReactionToCollisionEnter();
-        }
-    }
+    private Vector3 _velocity;
+    private bool _isGrounded;
+    private Collider _objectCollider;
+    private bool _canRotate;
+    private bool _isGliding;
+    private float _glideAmount;
 
-    private void OnCollisionStay(Collision other)
-    {
-        ReactionToCollisionStay();
-    }
+    private bool _enablePhysics = false;
 
-    private void ReactionToCollisionEnter()
+    private void Start()
     {
-        var reaction = new Vector3(velocity.x, -velocity.y, -velocity.z) * bouncinessFactor;
-        velocity.y = 0;
-        _velocityFactor = 0;
-        AddForce(reaction);
-        _velocityFactor = 1;
-    }
-
-    private void ReactionToCollisionStay()
-    {
-        AddForce(new Vector3(0, physicsProperties.gravity, 0));
-        if (Mathf.Abs(velocity.z) > 0)
-        {
-            var opposeForce = GetDirection(velocity.z) * physicsProperties.friction;
-            AddForce(new Vector3(0, physicsProperties.gravity, -opposeForce));
-        }
-        else
-        {
-            velocity.z = 0;
-        }
+        _objectCollider = GetComponent<Collider>();
     }
 
     private void FixedUpdate()
     {
-        if (!_movementStarted) return;
-        
-        var freezePosX = bodyConstraints.freezePositionX ? 0 : 1;
-        var freezePosY = bodyConstraints.freezePositionY ? 0 : 1;
-        var freezePosZ = bodyConstraints.freezePositionZ ? 0 : 1;
-        acceleration.y -= physicsProperties.gravity;
-        velocity += acceleration * (_velocityFactor * Time.fixedDeltaTime);
-        var displacement = velocity * Time.fixedDeltaTime;
-        
-        transform.Translate(displacement, Space.World);
-        Rotate();
+        if (!_enablePhysics)
+        {
+            return;
+        }
 
-        acceleration = Vector3.zero;
+        ApplyGravity();
+        ApplyFriction();
+        HandleMovement();
+        Rotate();
+    }
+
+    private void ApplyGravity()
+    {
+        if (!_isGrounded)
+        {
+            _velocity += Vector3.down * (physicsProperties.gravity * Time.fixedDeltaTime);
+        }
+    }
+
+    private void ApplyFriction()
+    {
+        if (_isGrounded)
+        {
+            Vector3 horizontalVelocity = new Vector3(_velocity.x, 0, _velocity.z);
+            Vector3 frictionForce = horizontalVelocity * (-friction * Time.fixedDeltaTime);
+            _velocity += frictionForce;
+            if (horizontalVelocity.magnitude < friction * Time.fixedDeltaTime)
+            {
+                _velocity.x = 0;
+                _velocity.z = 0;
+            }
+        }
+    }
+
+    private void HandleMovement()
+    {
+        transform.Translate(_velocity * Time.fixedDeltaTime, Space.World);
     }
     
     private void Rotate()
     {
-        if (_wingsOpen)
+        if (_isGliding)
         {
-            rocketman.transform.localRotation = Quaternion.Euler(90, 0, 0);
+            Debug.Log($"Glide Amount: {_glideAmount}");
+            
+            rocketman.transform.Rotate(new Vector3(0f, _glideAmount, _glideAmount) * Time.fixedDeltaTime, Space.Self);
+            Vector3 currentEuler = rocketman.transform.localEulerAngles;
+            rocketman.transform.localEulerAngles = new Vector3(90f, currentEuler.y, currentEuler.z);
+
+            Debug.Log($"Updated Rotation: {rocketman.transform.rotation.eulerAngles}");
         }
         else
         {
-            rocketman.transform.Rotate(new Vector3(velocity.z * rotationFactor, 0, 0) * Time.fixedDeltaTime);
+            if (_canRotate)
+            {
+                Vector3 currentEuler = rocketman.transform.localEulerAngles;
+                rocketman.transform.localEulerAngles = new Vector3(90f, currentEuler.y, currentEuler.z);
+            }
+            else
+            {
+                rocketman.transform.Rotate(new Vector3(_velocity.z * rotationFactor, 0f, 0f) * Time.fixedDeltaTime, Space.Self);
+            }
         }
     }
 
-    private void ApplyFriction(ref float value)
+    
+    private void OnCollisionEnter(Collision collision)
     {
-        if (Mathf.Approximately(value, 0))
+        Vector3 contactNormal = collision.contacts[0].normal;
+        Vector3 reflectionVector = Vector3.Reflect(_velocity, contactNormal);
+        _velocity = reflectionVector * bounciness;
+        _isGrounded = contactNormal.y > 0.5f;
+
+        if (debugCollision)
         {
-            value = 0; 
-            return;
-        }
-
-        int direction = GetDirection(value);
-        value -= physicsProperties.friction * direction;
-        
-        if (Mathf.Abs(value) < physicsProperties.friction)
-        {
-            value = 0;
+            Debug.Log($"Collision Normal: {contactNormal}, Reflection: {reflectionVector}, Velocity: {_velocity}");
         }
     }
 
-    private int GetDirection(float value)
+    private void OnCollisionStay(Collision collision)
     {
-        return (int)(value / Mathf.Abs(value));
+        Vector3 contactNormal = collision.contacts[0].normal;
+        _isGrounded = contactNormal.y > 0.5f;
     }
 
-    public void SetWingsStatus(bool value)
+    private void OnCollisionExit(Collision collision)
     {
-        _wingsOpen = value;
+        _isGrounded = false;
+    }
+
+    public void AddForce(Vector3 force)
+    {
+        _enablePhysics = true;
+        _velocity += force / mass;
+    }
+
+    public void SetCanRotate(bool value)
+    {
+        _canRotate = value;
+    }
+
+    public void SetIsGliding(bool value)
+    {
+        _isGliding = value;
+    }
+
+    public void SetGlideAmount(float amount)
+    {
+        _glideAmount = amount;
     }
 }

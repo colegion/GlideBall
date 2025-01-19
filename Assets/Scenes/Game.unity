@@ -814,7 +814,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d51cacab2ced2504cb4dcdc8ed385540, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  platformDefaultBoostAmount: 100
+  platformDefaultBoostAmount: 20
 --- !u!4 &2128809650
 Transform:
   m_ObjectHideFlags: 0
