@@ -10,12 +10,7 @@ public class PlatformPool : MonoBehaviour
 
     private Dictionary<PlatformType, Queue<IPoolable>> _pooledPlatforms;
 
-    private void OnEnable()
-    {
-        //InitializePlatformPool();
-    }
-
-    public void InitializePlatformPool()
+    public bool InitializePlatformPool()
     {
         _pooledPlatforms = new Dictionary<PlatformType, Queue<IPoolable>>();
         
@@ -27,7 +22,7 @@ public class PlatformPool : MonoBehaviour
             if (prefab == null)
             {
                 Debug.LogWarning($"Prefab for {platformType} not found.");
-                continue;
+                return false;
             }
 
             for (int i = 0; i < poolAmount; i++)
@@ -39,6 +34,8 @@ public class PlatformPool : MonoBehaviour
 
             _pooledPlatforms[platformType] = platformQueue;
         }
+
+        return true;
     }
 
     public IPoolable GetPlatformByType(PlatformType type)

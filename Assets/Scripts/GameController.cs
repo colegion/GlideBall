@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Helpers;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -9,6 +10,8 @@ public class GameController : MonoBehaviour
     [SerializeField] private Stick stick;
     [SerializeField] private Player player;
     [SerializeField] private CameraController cameraController;
+    [SerializeField] private PlatformController platformController;
+    [SerializeField] private GroundHelper groundHelper;
     private InputController _inputController;
 
     private static GameController _instance;
@@ -57,6 +60,8 @@ public class GameController : MonoBehaviour
                 {
                     player.HandleOnStickReleased(tilt);
                 });
+                groundHelper.SetTarget(player);
+                platformController.SetMovementStarted(true);
             }
         }
 

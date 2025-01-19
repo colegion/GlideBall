@@ -9,27 +9,38 @@ using Random = UnityEngine.Random;
 public class PlatformController : MonoBehaviour
 {
     private Dictionary<Vector2Int, List<Vector3>> _spatialHash = new Dictionary<Vector2Int, List<Vector3>>();
-    private readonly float _cellSize = 5f;
-    private readonly float _minDistance = 2f;
+    private readonly float _cellSize = 10f;
+    private readonly float _minDistance = 25f;
 
     [SerializeField] private PlatformPool platformPool;
     [SerializeField] private Transform player;
-    [SerializeField] private float spawnDistance = 20f;
-    [SerializeField] private float despawnDistance = -10f;
+    [SerializeField] private float ySpawnPosition;
+    [SerializeField] private float spawnDistance;
+    [SerializeField] private float despawnDistance;
     private List<Vector3> _spawnPoints;
-
+    private bool _poolReady;
+    private bool _initialSpawnHandled;
+    private bool _movementStarted;
     private readonly List<Platform> _activePlatforms = new List<Platform>();
 
     private void Start()
     {
-        platformPool.InitializePlatformPool();
+        _poolReady = platformPool.InitializePlatformPool();
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
-        ManagePlatforms();
-    }
+        if (!_poolReady) return;
+        if (!_initialSpawnHandled)
+        {
+            SpawnPlatformsIfNeeded();
+            _initialSpawnHandled = true;
+        }
 
+        if (_movementStarted)
+            ManagePlatforms();
+    }
+    
     private void ManagePlatforms()
     {
         RemoveOutOfViewPlatforms();
@@ -51,10 +62,11 @@ public class PlatformController : MonoBehaviour
                 }
             }
         }
-        
+
         for (int i = 0; i < 20; i++)
         {
             Vector3 spawnPoint = GetRandomSpawnPoint();
+            if (spawnPoint == Vector3.zero) return;
             PlatformType type = GetRandomPlatformType();
             IPoolable platform = platformPool.GetPlatformByType(type);
 
@@ -72,7 +84,7 @@ public class PlatformController : MonoBehaviour
             }
         }
     }
-    
+
     private List<Vector3> GetLastRowInSpatialHash()
     {
         Vector2Int lastKey = default;
@@ -103,7 +115,7 @@ public class PlatformController : MonoBehaviour
         {
             float randomX = Random.Range(bottomLeft.x, topRight.x);
             float randomZ = Random.Range(bottomLeft.z, topRight.z);
-            Vector3 newPoint = new Vector3(randomX, 0, randomZ);
+            Vector3 newPoint = new Vector3(randomX, ySpawnPosition, randomZ);
             Vector2Int cell = GetCell(newPoint);
             if (IsPointValid(cell, newPoint))
             {
@@ -152,6 +164,7 @@ public class PlatformController : MonoBehaviour
                 _activePlatforms.RemoveAt(i);
             }
         }
+
         RemoveOutOfViewPoints();
     }
 
@@ -159,7 +172,7 @@ public class PlatformController : MonoBehaviour
     {
         Camera camera = Camera.main;
         if (camera == null) return;
-        
+
         Vector3 bottomLeft = camera.ViewportToWorldPoint(new Vector3(0, 0, spawnDistance));
         Vector3 topRight = camera.ViewportToWorldPoint(new Vector3(1, 1, spawnDistance));
         Vector2Int minCell = GetCell(bottomLeft);
@@ -173,7 +186,7 @@ public class PlatformController : MonoBehaviour
             }
         }
 
-        foreach (var cell in cellsToRemove)
+        /*foreach (var cell in cellsToRemove)
         {
             if (_spatialHash.TryGetValue(cell, out List<Vector3> points))
             {
@@ -189,7 +202,7 @@ public class PlatformController : MonoBehaviour
 
                 _spatialHash.Remove(cell);
             }
-        }
+        }*/
     }
 
     private Vector2Int GetCell(Vector3 position)
@@ -198,6 +211,11 @@ public class PlatformController : MonoBehaviour
             Mathf.FloorToInt(position.x / _cellSize),
             Mathf.FloorToInt(position.z / _cellSize)
         );
+    }
+
+    public void SetMovementStarted(bool value)
+    {
+        _movementStarted = value;
     }
 
     private PlatformType GetRandomPlatformType()
