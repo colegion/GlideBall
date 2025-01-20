@@ -8,10 +8,6 @@ using Random = UnityEngine.Random;
 
 public class PlatformController : MonoBehaviour
 {
-    private Dictionary<Vector2Int, List<Vector3>> _spatialHash = new Dictionary<Vector2Int, List<Vector3>>();
-    private readonly float _cellSize = 10f;
-    private readonly float _minDistance = 25f;
-
     [SerializeField] private PlatformPool platformPool;
     [SerializeField] private Transform player;
     [SerializeField] private float ySpawnPosition;
@@ -22,6 +18,9 @@ public class PlatformController : MonoBehaviour
     private bool _initialSpawnHandled;
     private bool _movementStarted;
     private readonly List<Platform> _activePlatforms = new List<Platform>();
+    private Dictionary<Vector2Int, List<Vector3>> _spatialHash = new Dictionary<Vector2Int, List<Vector3>>();
+    private readonly float _cellSize = 10f;
+    private readonly float _minDistance = 25f;
 
     private void Start()
     {
