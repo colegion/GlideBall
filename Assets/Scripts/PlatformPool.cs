@@ -28,7 +28,6 @@ public class PlatformPool : MonoBehaviour
             for (int i = 0; i < poolAmount; i++)
             {
                 Platform instance = Instantiate(prefab, transform);
-                instance.OnPooled(this);
                 platformQueue.Enqueue(instance);
             }
 

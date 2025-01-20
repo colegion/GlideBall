@@ -14,23 +14,6 @@ public class GameController : MonoBehaviour
     [SerializeField] private GroundHelper groundHelper;
     private InputController _inputController;
 
-    private static GameController _instance;
-
-    public static GameController Instance => _instance;
-
-    private void Awake()
-    {
-        if (_instance == null)
-        {
-            _instance = this;
-            DontDestroyOnLoad(this);
-        }
-        else
-        {
-            Destroy(this);
-        }
-    }
-
     private void OnEnable()
     {
         _inputController = new InputController();
@@ -81,7 +64,6 @@ public class GameController : MonoBehaviour
         if (_inputController.GeneralInputs.Glide.enabled)
         {
             var delta = _inputController.GeneralInputs.Glide.ReadValue<Vector2>();
-            Debug.Log($"swipe delta is : {delta}");
             player.TiltByAmount(delta);
         }
     }

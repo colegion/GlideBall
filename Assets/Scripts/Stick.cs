@@ -9,7 +9,7 @@ public class Stick : MonoBehaviour
 {
     [SerializeField] private Transform[] bones;
     [SerializeField] private Animator stickAnimator;
-    private readonly float _sensitivity = 22f;
+    [SerializeField] private float sensitivity;
     private float _lastTilt;
 
     private static int _releaseAnimationKey = Animator.StringToHash("StickRelease");
@@ -17,7 +17,7 @@ public class Stick : MonoBehaviour
     {
         if (stickAnimator.enabled)
             stickAnimator.enabled = false;
-        _lastTilt = (angle / Screen.width) * _sensitivity;
+        _lastTilt = (angle / Screen.width) * sensitivity;
         if (_lastTilt < 0) _lastTilt = 0;
         foreach (var bone in bones)
         {

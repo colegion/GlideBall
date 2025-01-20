@@ -5,7 +5,8 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    [SerializeField] private GameObject rocketman;
+    [SerializeField] private float upwardMoveFactor;
+    [SerializeField] private float forwardMoveFactor;
     [SerializeField] private Animator playerAnimator;
     [SerializeField] private CustomPhysics physics;
 
@@ -14,7 +15,7 @@ public class Player : MonoBehaviour
 
     public void HandleOnStickReleased(float tilt)
     {
-        physics.AddForce(new Vector3(0, tilt, tilt * 3f));
+        physics.AddForce(new Vector3(0, tilt * upwardMoveFactor, tilt * forwardMoveFactor));
     }
 
     public void ToggleWings(bool toggle)
@@ -43,7 +44,12 @@ public class Player : MonoBehaviour
     {
         if (other.gameObject.TryGetComponent(out Platform platform))
         {
-            physics.AddForce(new Vector3(0, platform.GetBoostAmount(), 0));
+            Debug.Log("trigger with platform :" + platform.name + " " + platform.GetBoostAmount());
+            Vector3 platformNormal = other.transform.up;
+            float boostAmount = platform.GetBoostAmount();
+            
+            Vector3 boostForce = platformNormal * boostAmount;
+            physics.AddForce(boostForce);
         }
     }
 

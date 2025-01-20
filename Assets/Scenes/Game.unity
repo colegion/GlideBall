@@ -472,8 +472,8 @@ MonoBehaviour:
   platformPool: {fileID: 2065530334}
   player: {fileID: 2037640690}
   ySpawnPosition: 2
-  spawnDistance: 75
-  despawnDistance: -500
+  spawnDistance: 100
+  despawnDistance: -200
 --- !u!4 &1296510665
 Transform:
   m_ObjectHideFlags: 0
@@ -814,7 +814,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d51cacab2ced2504cb4dcdc8ed385540, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  platformDefaultBoostAmount: 20
+  platformDefaultBoostAmount: 25
 --- !u!4 &2128809650
 Transform:
   m_ObjectHideFlags: 0
@@ -961,7 +961,12 @@ PrefabInstance:
     - target: {fileID: 857246419672909275, guid: 862aef25e170a404f9e99f8db358e889,
         type: 3}
       propertyPath: glideFactor
-      value: 2.5
+      value: 3.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 857246419672909275, guid: 862aef25e170a404f9e99f8db358e889,
+        type: 3}
+      propertyPath: rotationFactor
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 857246419672909275, guid: 862aef25e170a404f9e99f8db358e889,
         type: 3}
@@ -972,6 +977,11 @@ PrefabInstance:
         type: 3}
       propertyPath: bouncinessFactor
       value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 857246419672909275, guid: 862aef25e170a404f9e99f8db358e889,
+        type: 3}
+      propertyPath: glideVelocityFactor
+      value: 0.4
       objectReference: {fileID: 0}
     - target: {fileID: 857246419672909275, guid: 862aef25e170a404f9e99f8db358e889,
         type: 3}
@@ -1063,6 +1073,11 @@ PrefabInstance:
       propertyPath: baseBone
       value: 
       objectReference: {fileID: 1324080721}
+    - target: {fileID: 3548614498284914591, guid: 862aef25e170a404f9e99f8db358e889,
+        type: 3}
+      propertyPath: sensitivity
+      value: 22
+      objectReference: {fileID: 0}
     - target: {fileID: 3611045209499957160, guid: 862aef25e170a404f9e99f8db358e889,
         type: 3}
       propertyPath: m_Constraints
@@ -1262,6 +1277,16 @@ PrefabInstance:
         type: 3}
       propertyPath: phy
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 8889741423745335045, guid: 862aef25e170a404f9e99f8db358e889,
+        type: 3}
+      propertyPath: upwardMoveFactor
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8889741423745335045, guid: 862aef25e170a404f9e99f8db358e889,
+        type: 3}
+      propertyPath: forwardMoveFactor
+      value: 4
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

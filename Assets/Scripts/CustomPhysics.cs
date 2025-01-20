@@ -1,3 +1,4 @@
+using System;
 using Scriptables;
 using UnityEngine;
 
@@ -9,8 +10,10 @@ public class CustomPhysics : MonoBehaviour
     [SerializeField] private float bounciness = 0.1f;
     [SerializeField] private CustomPhysicsProperties physicsProperties;
     [SerializeField] private GameObject rocketman;
+    [Header("Physics Factors")]
     [SerializeField] private float rotationFactor;
     [SerializeField] private float glideFactor;
+    [SerializeField] private float glideVelocityFactor;
 
     private Vector3 _velocity;
     private bool _isGrounded;
@@ -18,8 +21,9 @@ public class CustomPhysics : MonoBehaviour
     private bool _canRotate;
     private bool _isGliding;
     private float _glideAmount;
-
     private bool _enablePhysics = false;
+
+    public static event Action OnBallGrounded;
 
     private void Start()
     {
@@ -76,7 +80,7 @@ public class CustomPhysics : MonoBehaviour
             rocketman.transform.Rotate(new Vector3(0f, -_glideAmount, -_glideAmount) * (Time.fixedDeltaTime * glideFactor), Space.Self);
             Vector3 currentEuler = rocketman.transform.localEulerAngles;
             rocketman.transform.localEulerAngles = new Vector3(90f, currentEuler.y, currentEuler.z);
-            _velocity += new Vector3(_glideAmount / 7f, 0, 0);
+            _velocity += new Vector3(_glideAmount * glideVelocityFactor, 0, 0);
 
             Debug.Log($"Updated Rotation: {rocketman.transform.rotation.eulerAngles}");
         }
