@@ -7,6 +7,7 @@ using UnityEngine.Serialization;
 
 public class Stick : MonoBehaviour
 {
+    [SerializeField] private Transform playerInitialTranform;
     [SerializeField] private Transform[] bones;
     [SerializeField] private Animator stickAnimator;
     [SerializeField] private float sensitivity;
@@ -34,5 +35,12 @@ public class Stick : MonoBehaviour
     public float GetLastTilt()
     {
         return _lastTilt;
+    }
+
+    public void RePositionPlayer(Player player)
+    {
+        _lastTilt = 0;
+        player.transform.SetParent(transform);
+        player.transform.localPosition = playerInitialTranform.position;
     }
 }

@@ -185,25 +185,22 @@ public class PlatformController : MonoBehaviour
                 cellsToRemove.Add(cell);
             }
         }
-
-        /*foreach (var cell in cellsToRemove)
-        {
-            if (_spatialHash.TryGetValue(cell, out List<Vector3> points))
-            {
-                foreach (Vector3 point in points)
-                {
-                    Platform platform = _activePlatforms.Find(p => p.transform.position == point);
-                    if (platform != null)
-                    {
-                        platformPool.ReturnPlatform(platform);
-                        _activePlatforms.Remove(platform);
-                    }
-                }
-
-                _spatialHash.Remove(cell);
-            }
-        }*/
     }
+
+    public void ResetPool()
+    {
+        foreach (var platform in _activePlatforms)
+        {
+            platformPool.ReturnPlatform(platform);
+        }
+        _activePlatforms.Clear();
+        _spatialHash.Clear();
+        _initialSpawnHandled = false;
+        _movementStarted = false;
+
+        Debug.Log("Platform pool reset successfully.");
+    }
+
 
     private Vector2Int GetCell(Vector3 position)
     {

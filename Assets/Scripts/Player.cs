@@ -10,9 +10,10 @@ public class Player : MonoBehaviour
     [SerializeField] private Animator playerAnimator;
     [SerializeField] private CustomPhysics physics;
 
+    private bool _acceptInput;
     private bool _wingsEnabled;
     private static readonly int IsWingsOpen = Animator.StringToHash("isWingsOpen");
-
+    
     public void HandleOnStickReleased(float tilt)
     {
         physics.AddForce(new Vector3(0, tilt * upwardMoveFactor, tilt * forwardMoveFactor));

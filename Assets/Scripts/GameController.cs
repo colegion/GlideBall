@@ -14,15 +14,24 @@ public class GameController : MonoBehaviour
     [SerializeField] private GroundHelper groundHelper;
     private InputController _inputController;
 
+    private bool _acceptInput = true;
+
     private void OnEnable()
     {
         _inputController = new InputController();
         _inputController.GeneralInputs.Tilt.Enable();
         _inputController.GeneralInputs.OnTap.Enable();
+        AddListeners();
+    }
+
+    private void OnDisable()
+    {
+        RemoveListeners();
     }
     
     private void Update()
     {
+        if(!_acceptInput) return;
         if (_inputController == null) return;
         if (_inputController.GeneralInputs.OnTap.IsPressed())
         {
@@ -66,5 +75,29 @@ public class GameController : MonoBehaviour
             var delta = _inputController.GeneralInputs.Glide.ReadValue<Vector2>();
             player.TiltByAmount(delta);
         }
+    }
+    
+    
+    private void HandleOnBallGrounded()
+    {
+        _acceptInput = false;
+    }
+
+    private void RestartGame()
+    {
+        stick.RePositionPlayer(player);
+        platformController.ResetPool();
+    }
+
+    private void AddListeners()
+    {
+        CustomPhysics.OnBallGrounded += HandleOnBallGrounded;
+        UIHelper.OnRestartRequested += RestartGame;
+    }
+
+    private void RemoveListeners()
+    {
+        CustomPhysics.OnBallGrounded -= HandleOnBallGrounded;
+        UIHelper.OnRestartRequested -= RestartGame;
     }
 }

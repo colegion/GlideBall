@@ -63,6 +63,9 @@ public class CustomPhysics : MonoBehaviour
                 _velocity.x = 0;
                 _velocity.z = 0;
             }
+
+            _enablePhysics = false;
+            OnBallGrounded?.Invoke();
         }
     }
 
