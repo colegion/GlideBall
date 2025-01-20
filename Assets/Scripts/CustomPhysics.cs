@@ -6,16 +6,11 @@ public class CustomPhysics : MonoBehaviour
 {
     [Header("Physics Properties")]
     [SerializeField] private float mass = 1f;
-    [SerializeField] private float friction = 0.1f;
     [SerializeField] private float bounciness = 0.1f;
     [SerializeField] private CustomPhysicsProperties physicsProperties;
-
-    [Header("Debug Options")] 
-    [SerializeField] private bool debugCollision = true;
-
     [SerializeField] private GameObject rocketman;
     [SerializeField] private float rotationFactor;
-    [SerializeField] private float tiltBorder;
+    [SerializeField] private float glideFactor;
 
     private Vector3 _velocity;
     private bool _isGrounded;
@@ -48,7 +43,7 @@ public class CustomPhysics : MonoBehaviour
     {
         if (!_isGrounded)
         {
-            _velocity += Vector3.down * (physicsProperties.gravity * Time.fixedDeltaTime);
+            _velocity += Vector3.down * (physicsProperties.currentGravity * Time.fixedDeltaTime);
         }
     }
 
@@ -57,9 +52,9 @@ public class CustomPhysics : MonoBehaviour
         if (_isGrounded)
         {
             Vector3 horizontalVelocity = new Vector3(_velocity.x, 0, _velocity.z);
-            Vector3 frictionForce = horizontalVelocity * (-friction * Time.fixedDeltaTime);
+            Vector3 frictionForce = horizontalVelocity * (-physicsProperties.friction * Time.fixedDeltaTime);
             _velocity += frictionForce;
-            if (horizontalVelocity.magnitude < friction * Time.fixedDeltaTime)
+            if (horizontalVelocity.magnitude < physicsProperties.friction * Time.fixedDeltaTime)
             {
                 _velocity.x = 0;
                 _velocity.z = 0;
@@ -78,9 +73,10 @@ public class CustomPhysics : MonoBehaviour
         {
             Debug.Log($"Glide Amount: {_glideAmount}");
             
-            rocketman.transform.Rotate(new Vector3(0f, _glideAmount, _glideAmount) * Time.fixedDeltaTime, Space.Self);
+            rocketman.transform.Rotate(new Vector3(0f, -_glideAmount, -_glideAmount) * (Time.fixedDeltaTime * glideFactor), Space.Self);
             Vector3 currentEuler = rocketman.transform.localEulerAngles;
             rocketman.transform.localEulerAngles = new Vector3(90f, currentEuler.y, currentEuler.z);
+            _velocity += new Vector3(_glideAmount / 7f, 0, 0);
 
             Debug.Log($"Updated Rotation: {rocketman.transform.rotation.eulerAngles}");
         }
@@ -105,11 +101,6 @@ public class CustomPhysics : MonoBehaviour
         Vector3 reflectionVector = Vector3.Reflect(_velocity, contactNormal);
         _velocity = reflectionVector * bounciness;
         _isGrounded = contactNormal.y > 0.5f;
-
-        if (debugCollision)
-        {
-            Debug.Log($"Collision Normal: {contactNormal}, Reflection: {reflectionVector}, Velocity: {_velocity}");
-        }
     }
 
     private void OnCollisionStay(Collision collision)
@@ -131,6 +122,14 @@ public class CustomPhysics : MonoBehaviour
 
     public void SetCanRotate(bool value)
     {
+        if (value)
+        {
+            physicsProperties.currentGravity = physicsProperties.defaultGravity;
+        }
+        else
+        {
+            physicsProperties.currentGravity = physicsProperties.defaultGravity / 2f;
+        }
         _canRotate = value;
     }
 

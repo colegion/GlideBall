@@ -960,6 +960,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 857246419672909275, guid: 862aef25e170a404f9e99f8db358e889,
         type: 3}
+      propertyPath: glideFactor
+      value: 2.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 857246419672909275, guid: 862aef25e170a404f9e99f8db358e889,
+        type: 3}
       propertyPath: _movementStarted
       value: 0
       objectReference: {fileID: 0}

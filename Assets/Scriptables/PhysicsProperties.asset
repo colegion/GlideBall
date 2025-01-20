@@ -12,5 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a8b67ebd3280bc4cb7b6e69c48ab64f, type: 3}
   m_Name: PhysicsProperties
   m_EditorClassIdentifier: 
-  gravity: 9.81
-  friction: 9.81
+  defaultGravity: 9.81
+  currentGravity: 4.905
+  friction: 0.1

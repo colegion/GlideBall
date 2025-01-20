@@ -14,7 +14,7 @@ public class Player : MonoBehaviour
 
     public void HandleOnStickReleased(float tilt)
     {
-        physics.AddForce(new Vector3(0, tilt, tilt * 5f));
+        physics.AddForce(new Vector3(0, tilt, tilt * 3f));
     }
 
     public void ToggleWings(bool toggle)
