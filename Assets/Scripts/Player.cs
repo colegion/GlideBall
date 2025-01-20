@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    [SerializeField] private GameObject rocketman;
     [SerializeField] private float upwardMoveFactor;
     [SerializeField] private float forwardMoveFactor;
     [SerializeField] private Animator playerAnimator;
@@ -27,7 +28,7 @@ public class Player : MonoBehaviour
             {
                 _wingsEnabled = true;
                 playerAnimator.SetBool(IsWingsOpen, true);
-                physics.SetCanRotate(true);
+                physics.SetWingsStatus(true);
             }
         }
         else
@@ -36,7 +37,7 @@ public class Player : MonoBehaviour
             {
                 _wingsEnabled = false;
                 playerAnimator.SetBool(IsWingsOpen, false);
-                physics.SetCanRotate(false);
+                physics.SetWingsStatus(false);
             }
         }
     }
@@ -45,7 +46,6 @@ public class Player : MonoBehaviour
     {
         if (other.gameObject.TryGetComponent(out Platform platform))
         {
-            Debug.Log("trigger with platform :" + platform.name + " " + platform.GetBoostAmount());
             Vector3 platformNormal = other.transform.up;
             float boostAmount = platform.GetBoostAmount();
             
@@ -64,5 +64,10 @@ public class Player : MonoBehaviour
     {
         physics.SetIsGliding(false);
         physics.SetGlideAmount(0);
+    }
+
+    public void ResetSelf()
+    {
+        rocketman.transform.rotation = Quaternion.Euler(Vector3.zero);
     }
 }

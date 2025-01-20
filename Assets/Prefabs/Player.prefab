@@ -49,13 +49,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mass: 1
-  friction: 0.1
   bounciness: 0.5
   physicsProperties: {fileID: 11400000, guid: 0c498130e42f9c94192d116d2fcf3225, type: 2}
-  debugCollision: 1
   rocketman: {fileID: 7181809558908529066}
-  rotationFactor: 20
-  tiltBorder: 12.5
+  rotationFactor: 30
+  glideFactor: 3.5
+  glideVelocityFactor: 4
 --- !u!114 &8960522869685148031
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -68,7 +67,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 17a88873cea298f4a99ad0fdddeec34f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rocketman: {fileID: 0}
+  rocketman: {fileID: 7181809558908529066}
+  upwardMoveFactor: 2
+  forwardMoveFactor: 4
   playerAnimator: {fileID: 4286217002139072195}
   physics: {fileID: 928046882723652513}
 --- !u!54 &3826259605666419154

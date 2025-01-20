@@ -85,8 +85,18 @@ public class GameController : MonoBehaviour
 
     private void RestartGame()
     {
+        player.ResetSelf();
+        cameraController.ResetSelf();
         stick.RePositionPlayer(player);
         platformController.ResetPool();
+        ResetInputStates();
+        _acceptInput = true;
+    }
+
+    private void ResetInputStates()
+    {
+        _inputController.GeneralInputs.TriggerGlide.Disable();
+        _inputController.GeneralInputs.Tilt.Enable();
     }
 
     private void AddListeners()

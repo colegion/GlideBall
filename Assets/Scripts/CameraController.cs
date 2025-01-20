@@ -9,6 +9,7 @@ using UnityEngine.Serialization;
 
 public class CameraController : MonoBehaviour
 {
+    [SerializeField] private Transform initialTransform;
     [SerializeField] private AnimationCurve movementCurve;
     [SerializeField] private float duration;
     [SerializeField] private float backwardFollowingDistance;
@@ -21,23 +22,16 @@ public class CameraController : MonoBehaviour
     {
         _targetToFollow = target;
         _fixedPos = _targetToFollow.transform.position + Vector3.back * backwardFollowingDistance +
-                        Vector3.up * upwardFollowingDistance; 
+                        Vector3.up * upwardFollowingDistance;
         AnimateInitialMove(onComplete);
     }
 
     private void AnimateInitialMove(Action onComplete)
     {
-        // Create a DOTween sequence
         Sequence sequence = DOTween.Sequence();
-        
-        // Add movement to the sequence
         sequence.Append(transform.DOMove(_fixedPos, duration)
             .SetEase(movementCurve));
-
-        // Add rotation to the sequence in parallel with movement
         sequence.Join(transform.DORotate(new Vector3(26, 0, 0), duration).SetEase(movementCurve));
-
-        // Add completion callback
         sequence.OnComplete(() =>
         {
             _followingStarted = true;
@@ -51,6 +45,15 @@ public class CameraController : MonoBehaviour
         var followingPos =  _targetToFollow.transform.position + Vector3.back * backwardFollowingDistance +
                             Vector3.up * upwardFollowingDistance; 
         transform.position = followingPos;
+    }
+
+    public void ResetSelf()
+    {
+        _followingStarted = false;
+        _targetToFollow = null;
+        transform.position = initialTransform.position;
+        transform.rotation = initialTransform.rotation;
+
     }
 
 }

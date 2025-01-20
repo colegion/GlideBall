@@ -18,7 +18,7 @@ public class CustomPhysics : MonoBehaviour
     private Vector3 _velocity;
     private bool _isGrounded;
     private Collider _objectCollider;
-    private bool _canRotate;
+    private bool _wingsEnabled;
     private bool _isGliding;
     private float _glideAmount;
     private bool _enablePhysics = false;
@@ -28,6 +28,7 @@ public class CustomPhysics : MonoBehaviour
     private void Start()
     {
         _objectCollider = GetComponent<Collider>();
+        physicsProperties.currentGravity = physicsProperties.defaultGravity;
     }
 
     private void FixedUpdate()
@@ -89,7 +90,7 @@ public class CustomPhysics : MonoBehaviour
         }
         else
         {
-            if (_canRotate)
+            if (_wingsEnabled)
             {
                 Vector3 currentEuler = rocketman.transform.localEulerAngles;
                 rocketman.transform.localEulerAngles = new Vector3(90f, currentEuler.y, currentEuler.z);
@@ -107,13 +108,13 @@ public class CustomPhysics : MonoBehaviour
         Vector3 contactNormal = collision.contacts[0].normal;
         Vector3 reflectionVector = Vector3.Reflect(_velocity, contactNormal);
         _velocity = reflectionVector * bounciness;
-        _isGrounded = contactNormal.y > 0.5f;
+        _isGrounded = contactNormal.y > 0.5f && !IsCollidedWithPlatform(collision);
     }
 
     private void OnCollisionStay(Collision collision)
     {
         Vector3 contactNormal = collision.contacts[0].normal;
-        _isGrounded = contactNormal.y > 0.5f;
+        _isGrounded = contactNormal.y > 0.5f && !IsCollidedWithPlatform(collision);
     }
 
     private void OnCollisionExit(Collision collision)
@@ -127,17 +128,17 @@ public class CustomPhysics : MonoBehaviour
         _velocity += force / mass;
     }
 
-    public void SetCanRotate(bool value)
+    public void SetWingsStatus(bool value)
     {
         if (value)
         {
-            physicsProperties.currentGravity = physicsProperties.defaultGravity;
+            physicsProperties.currentGravity = physicsProperties.defaultGravity / 2f;
         }
         else
         {
-            physicsProperties.currentGravity = physicsProperties.defaultGravity / 2f;
+            physicsProperties.currentGravity = physicsProperties.defaultGravity;
         }
-        _canRotate = value;
+        _wingsEnabled = value;
     }
 
     public void SetIsGliding(bool value)
@@ -149,4 +150,7 @@ public class CustomPhysics : MonoBehaviour
     {
         _glideAmount = amount;
     }
+
+    public bool IsCollidedWithPlatform(Collision collision) =>
+        collision.gameObject.TryGetComponent(out Platform platform);
 }

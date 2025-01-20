@@ -40,7 +40,7 @@ public class Stick : MonoBehaviour
     public void RePositionPlayer(Player player)
     {
         _lastTilt = 0;
-        player.transform.SetParent(transform);
-        player.transform.localPosition = playerInitialTranform.position;
+        player.transform.SetParent(playerInitialTranform);
+        player.transform.localPosition = Vector3.zero;
     }
 }
